@@ -1,7 +1,6 @@
 import java.lang.Thread;
 import java.lang.System;
 import java.util.ArrayList;
-import java.util.Objects;
 
 class PrimeFinder extends Thread {
 
@@ -10,7 +9,7 @@ class PrimeFinder extends Thread {
     private final int min;
     private final int max;
     public static PrimeNumbers a;
-    private Object l = new Object();
+    private static final Object l = new Object();
 
 
     public static void main (String [] args) {
@@ -29,23 +28,28 @@ class PrimeFinder extends Thread {
             System.out.println("The argument <thread_count> must be greater than 1");
             System.exit(0);
         }
-        int dif = upper - lower;
+        int dif = (upper - lower)+1;
         if (dif<count){
             count=dif;
         }
         int extra = dif%count;
         int inc = (dif-extra)/count;
+        running = new ArrayList<>();
         a = new PrimeNumbers(lower, upper);
         System.out.println();
-        for (int i = lower; i <= upper; i++) {
-            int temp = i+inc;
+        int temp1 = lower;
+        System.out.println(dif);
+        System.out.println(extra);
+        for (int i = 0; i < count; i++) {
+            int temp = temp1+inc-1;
             if (extra>0){
                 extra--;
                 temp++;
             }
-            running.add(new PrimeFinder(i + " - " +temp,i,temp));
-            System.out.println("Thread "+(running.size()-1)+" searching range ["+i+", "+temp+"]");
-            i = temp;
+            running.add(new PrimeFinder(temp1 + " - " +temp,temp1,temp));
+            running.getLast().start();
+            System.out.println("Thread "+(running.size()-1)+" searching range ["+temp1+", "+temp+"]");
+            temp1 = temp+1;
         }
         System.out.println();
         boolean isRunning = true;
